@@ -11,7 +11,7 @@ export interface AiResult {
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
-  private readonly API = 'http://localhost:8000/api';
+  private  readonly API = 'https://onrender.com';
 
   constructor(private http: HttpClient) {}
 

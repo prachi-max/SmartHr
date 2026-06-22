@@ -5,7 +5,7 @@ import { Job, ResumeAnalysis } from '../models/job.model';
 
 @Injectable({ providedIn: 'root' })
 export class JobService {
-  private readonly API = 'http://localhost:8000/api';
+  private readonly API = 'https://onrender.com/api';
 
   jobs = signal<Job[]>([]);
 
