@@ -5,7 +5,7 @@ import { User } from '../models/job.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly API = 'https://onrender.com/api';
+  private readonly API = 'https://smarthr-9d4i.onrender.com/api';
 
   token       = signal<string | null>(localStorage.getItem('sh_token'));
   currentUser = signal<User | null>(null);

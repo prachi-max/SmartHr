@@ -17,7 +17,7 @@ export interface Job {
 
 @Injectable({ providedIn: 'root' })
 export class JobsService {
-  private readonly API = 'https://onrender.com/api';
+  private readonly API = 'https://smarthr-9d4i.onrender.com/api';
   jobs = signal<Job[]>([]);
 
   constructor(private http: HttpClient) {}
