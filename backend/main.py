@@ -7,9 +7,14 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="SmartHire API", version="1.0.0")
 
+# ✅ FIXED: Added production Vercel domains to clear the CORS block
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=[
+        "http://localhost:4200",
+        "https://vercel.app",
+        "https://vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
