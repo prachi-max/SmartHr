@@ -1,0 +1,37 @@
+<div class="page-header">
+  <div>
+    <div class="page-title">Kanban Board</div>
+    <div class="page-sub">Your applications by stage</div>
+  </div>
+  <button class="btn btn-primary" (click)="modal.open()">+ Add Job</button>
+</div>
+
+<div class="kanban">
+  @for (col of columns(); track col.status) {
+    <div class="kanban-col">
+      <div class="kanban-head">
+        <div class="col-label">
+          <div class="dot" [style.background]="col.color"></div>
+          {{ col.status | titlecase }}
+        </div>
+        <div class="kanban-count">{{ col.jobs.length }}</div>
+      </div>
+      <div class="kanban-body">
+        @if (!col.jobs.length) {
+          <div class="col-empty">Empty</div>
+        }
+        @for (j of col.jobs; track j.id) {
+          <div class="job-card">
+            <div class="job-company">{{ j.company }}</div>
+            <div class="job-role">{{ j.role }}</div>
+            <div class="job-date">{{ formatDate(j.applied_date) }}</div>
+            <div class="job-card-actions">
+              <button class="btn btn-ghost btn-sm" (click)="modal.open(j.id)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteJob(j.id)">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

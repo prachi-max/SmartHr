@@ -1,0 +1,88 @@
+<div class="page-header">
+  <div>
+    <div class="page-title">Resume Analyzer</div>
+    <div class="page-sub">Paste your resume and JD — AI tells you what's missing</div>
+  </div>
+</div>
+
+<div class="ai-wrap">
+  <div>
+    <div class="ai-card" style="margin-bottom:1rem">
+      <div class="ai-title">Job Description <span class="ai-badge">Step 1</span></div>
+      <textarea class="form-textarea" [(ngModel)]="jd" placeholder="Paste the full job description here..." style="min-height:180px"></textarea>
+    </div>
+    <div class="ai-card">
+      <div class="ai-title">Your Resume <span class="ai-badge">Step 2</span></div>
+     <input
+  type="file"
+  accept=".pdf,.docx"
+  (change)="onFileSelected($event)"
+  class="form-input"
+/>
+
+@if (selectedFile) {
+  <div style="margin-top:10px">
+    Selected: {{ selectedFile.name }}
+  </div>
+}
+      <button class="btn btn-primary" style="width:100%;margin-top:1rem;padding:11px;font-size:14px" (click)="analyze()">
+        Analyze with AI →
+      </button>
+    </div>
+  </div>
+
+  <div>
+    <div class="ai-card" style="height:100%">
+      <div class="ai-title">AI Analysis</div>
+
+      @if (!loading() && !result()) {
+        <div class="ai-placeholder">
+          Fill in the job description and your resume on the left, then click Analyze. The AI will:<br><br>
+          • Score your resume match (0–100)<br>
+          • List missing keywords<br>
+          • Highlight your strong points<br>
+          • Give specific improvement tips
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="ai-loading">
+          <div class="spinner"></div>
+          Analyzing with AI...
+        </div>
+      }
+
+      @if (result()) {
+        <div>
+          <div class="score-center">
+            <div class="score-ring" [style.border-color]="scoreColor" [style.color]="scoreColor">
+              {{ result()!.match_score }}%
+            </div>
+            <div class="score-summary">{{ result()!.summary }}</div>
+          </div>
+
+          <div class="ai-section">
+            <div class="ai-section-title">Missing Keywords</div>
+            @for (k of result()!.missing_keywords; track k) {
+              <span class="ai-pill pill-red">{{ k }}</span>
+            }
+          </div>
+
+          <div class="ai-section">
+            <div class="ai-section-title">Your Strong Points</div>
+            @for (k of result()!.strong_points; track k) {
+              <span class="ai-pill pill-green">{{ k }}</span>
+            }
+          </div>
+
+          <div class="ai-section">
+            <div class="ai-section-title">Suggestions</div>
+            @for (s of result()!.suggestions; track s) {
+              <div class="ai-suggestion">{{ s }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

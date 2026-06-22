@@ -1,0 +1,539 @@
+
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">Smart<span>Hire</span></div>
+    <p class="auth-sub">Track your job search. Land your dream role.</p>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Sign In</div>
+      <div class="auth-tab" onclick="switchTab('register')">Create Account</div>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+    <div id="login-form">
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="login-email" type="email" placeholder="you@example.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="login-pass" type="password" placeholder="••••••••"></div>
+      <button class="auth-btn" onclick="doLogin()">Sign In</button>
+    </div>
+    <div id="register-form" style="display:none">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="reg-name" type="text" placeholder="Prachi Nawale"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="reg-email" type="email" placeholder="you@example.com"></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" id="reg-pass" type="password" placeholder="Min 8 characters"></div>
+      <button class="auth-btn" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-screen">
+  <nav class="nav">
+    <div class="nav-logo">Smart<span>Hire</span></div>
+    <div class="nav-actions">
+      <span class="nav-user" id="nav-username"></span>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Job</button>
+      <button class="btn btn-ghost" onclick="logout()">Sign Out</button>
+    </div>
+  </nav>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-section">Workspace</div>
+      <div class="sidebar-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="sidebar-item" onclick="showPage('kanban')" id="nav-kanban">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="5" height="18" rx="1"/><rect x="10" y="3" width="5" height="12" rx="1"/><rect x="17" y="3" width="4" height="15" rx="1"/></svg>
+        Kanban Board
+        <span class="sidebar-badge" id="kanban-badge">0</span>
+      </div>
+      <div class="sidebar-item" onclick="showPage('list')" id="nav-list">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1.5"/><circle cx="3" cy="12" r="1.5"/><circle cx="3" cy="18" r="1.5"/></svg>
+        All Applications
+      </div>
+      <div class="sidebar-section" style="margin-top:8px">AI Tools</div>
+      <div class="sidebar-item" onclick="showPage('ai')" id="nav-ai">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 0 6h-1v1a4 4 0 0 1-8 0v-1H7a3 3 0 0 1 0-6h1V6a4 4 0 0 1 4-4z"/></svg>
+        Resume Analyzer
+        <span class="sidebar-badge" style="background:rgba(99,102,241,.2);color:#818cf8">AI</span>
+      </div>
+    </aside>
+
+    <!-- PAGES -->
+    <main class="main">
+
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div><div class="page-title">Dashboard</div><div class="page-sub">Your job search at a glance</div></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card total" onclick="showPage('list')"><div class="stat-label">Total Applied</div><div class="stat-value" id="stat-total">0</div></div>
+          <div class="stat-card applied-s" onclick="filterByStatus('applied')"><div class="stat-label">Applied</div><div class="stat-value" id="stat-applied">0</div></div>
+          <div class="stat-card interview-s" onclick="filterByStatus('interview')"><div class="stat-label">Interviews</div><div class="stat-value" id="stat-interview">0</div></div>
+          <div class="stat-card offer-s" onclick="filterByStatus('offer')"><div class="stat-label">Offers</div><div class="stat-value" id="stat-offer">0</div></div>
+          <div class="stat-card rejected-s" onclick="filterByStatus('rejected')"><div class="stat-label">Rejected</div><div class="stat-value" id="stat-rejected">0</div></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px">Application Pipeline</div>
+          <div id="pipeline-chart" style="display:flex;gap:8px;align-items:flex-end;height:120px"></div>
+          <div id="pipeline-labels" style="display:flex;gap:8px;margin-top:8px"></div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px">Recent Applications</div>
+          <div id="recent-jobs"></div>
+        </div>
+      </div>
+
+      <!-- KANBAN PAGE -->
+      <div class="page" id="page-kanban">
+        <div class="page-header">
+          <div><div class="page-title">Kanban Board</div><div class="page-sub">Drag your applications through stages</div></div>
+          <button class="btn btn-primary" onclick="openModal()">+ Add Job</button>
+        </div>
+        <div class="kanban" id="kanban-board"></div>
+      </div>
+
+      <!-- LIST PAGE -->
+      <div class="page" id="page-list">
+        <div class="page-header">
+          <div><div class="page-title">All Applications</div><div class="page-sub" id="list-subtitle">Showing all jobs</div></div>
+          <div style="display:flex;gap:8px">
+            <select class="form-select" style="width:auto;padding:7px 14px;font-size:13px" onchange="filterStatus(this.value)" id="status-filter">
+              <option value="">All Status</option>
+              <option value="applied">Applied</option>
+              <option value="shortlisted">Shortlisted</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal()">+ Add Job</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Company</th><th>Role</th><th>Status</th><th>Applied</th><th>Contact</th><th>Actions</th></tr></thead>
+            <tbody id="jobs-table-body"></tbody>
+          </table>
+          <div id="list-empty" class="empty" style="display:none">
+            <div class="empty-icon">📋</div>
+            <h3>No applications yet</h3>
+            <p>Start tracking your job search by adding your first application</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI PAGE -->
+      <div class="page" id="page-ai">
+        <div class="page-header">
+          <div><div class="page-title">Resume Analyzer</div><div class="page-sub">Paste your resume and JD — AI tells you what's missing</div></div>
+        </div>
+        <div class="ai-wrap">
+          <div>
+            <div class="ai-card" style="margin-bottom:1rem">
+              <div class="ai-title">Job Description <span class="ai-badge">Step 1</span></div>
+              <textarea class="form-textarea" id="ai-jd" placeholder="Paste the full job description here..." style="min-height:180px"></textarea>
+            </div>
+            <div class="ai-card">
+              <div class="ai-title">Your Resume <span class="ai-badge">Step 2</span></div>
+              <textarea class="form-textarea" id="ai-resume" placeholder="Paste your resume text here..." style="min-height:180px"></textarea>
+              <button class="btn btn-primary" style="width:100%;margin-top:1rem;padding:11px;font-size:14px" onclick="analyzeResume()">Analyze with AI →</button>
+            </div>
+          </div>
+          <div id="ai-result-area">
+            <div class="ai-card" style="height:100%">
+              <div class="ai-title">AI Analysis</div>
+              <div id="ai-placeholder" style="color:var(--text2);font-size:13px;line-height:1.7">
+                Fill in the job description and your resume on the left, then click Analyze. The AI will:<br><br>
+                • Score your resume match (0–100)<br>
+                • List missing keywords<br>
+                • Highlight your strong points<br>
+                • Give specific improvement tips
+              </div>
+              <div id="ai-loading" style="display:none" class="ai-loading"><div class="spinner"></div>Analyzing with Gemini AI...</div>
+              <div id="ai-results" style="display:none"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ADD JOB MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title-text">Add New Application</span>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">✕ Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Auto-fill from URL</label>
+        <div class="scrape-row">
+          <input class="form-input" id="job-url-input" type="url" placeholder="https://linkedin.com/jobs/...">
+          <button class="url-btn" onclick="scrapeUrl()">Fetch →</button>
+        </div>
+      </div>
+      <div style="height:0.5px;background:var(--border);margin:-4px 0 4px"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Company *</label><input class="form-input" id="job-company" placeholder="e.g. Google"></div>
+        <div class="form-group"><label class="form-label">Role *</label><input class="form-input" id="job-role" placeholder="e.g. Software Engineer"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="job-status">
+            <option value="applied">Applied</option>
+            <option value="shortlisted">Shortlisted</option>
+            <option value="interview">Interview</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Deadline</label><input class="form-input" id="job-deadline" type="datetime-local"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Contact Name</label><input class="form-input" id="job-contact-name" placeholder="HR name"></div>
+        <div class="form-group"><label class="form-label">Contact Email</label><input class="form-input" id="job-contact-email" type="email" placeholder="hr@company.com"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Job Description</label><textarea class="form-textarea" id="job-jd" placeholder="Paste the JD here..."></textarea></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" id="job-notes" placeholder="What did you discuss? Any follow-ups needed?"></textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveJob()" id="save-btn">Save Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
+
+<script>
+const API = 'http://localhost:8000/api';
+let token = localStorage.getItem('smarthire_token');
+let currentUser = null;
+let jobs = [];
+let editingJobId = null;
+let activeFilter = '';
+
+// ── AUTH ──
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-form').style.display = tab==='login'?'block':'none';
+  document.getElementById('register-form').style.display = tab==='register'?'block':'none';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value;
+  const pass = document.getElementById('login-pass').value;
+  if(!email||!pass) return showAuthError('Please fill in all fields');
+  try {
+    const fd = new FormData();
+    fd.append('username', email); fd.append('password', pass);
+    const res = await fetch(`${API}/users/login`, {method:'POST',body:fd});
+    const data = await res.json();
+    if(!res.ok) return showAuthError(data.detail || 'Login failed');
+    token = data.access_token;
+    localStorage.setItem('smarthire_token', token);
+    await loadApp();
+  } catch(e) { showAuthError('Cannot connect to server. Is it running?'); }
+}
+
+async function doRegister() {
+  const name = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const pass = document.getElementById('reg-pass').value;
+  if(!name||!email||!pass) return showAuthError('Please fill in all fields');
+  try {
+    const res = await fetch(`${API}/users/register`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password:pass})});
+    const data = await res.json();
+    if(!res.ok) return showAuthError(data.detail || 'Registration failed');
+    showAuthError('Account created! Please sign in.', true);
+    switchTab('login');
+  } catch(e) { showAuthError('Cannot connect to server. Is it running?'); }
+}
+
+function showAuthError(msg, success=false) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.borderColor = success ? 'rgba(16,185,129,.3)' : 'rgba(239,68,68,.3)';
+  el.style.color = success ? 'var(--success)' : 'var(--danger)';
+  el.style.background = success ? 'rgba(16,185,129,.1)' : 'rgba(239,68,68,.1)';
+}
+
+function logout() {
+  localStorage.removeItem('smarthire_token');
+  token = null; jobs = [];
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app-screen').style.display = 'none';
+}
+
+async function loadApp() {
+  try {
+    const res = await fetch(`${API}/users/me`, {headers:{Authorization:`Bearer ${token}`}});
+    if(!res.ok) { logout(); return; }
+    currentUser = await res.json();
+    document.getElementById('nav-username').textContent = currentUser.name;
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app-screen').style.display = 'block';
+    await loadJobs();
+  } catch(e) { logout(); }
+}
+
+// ── JOBS ──
+async function loadJobs() {
+  try {
+    const res = await fetch(`${API}/jobs/`, {headers:{Authorization:`Bearer ${token}`}});
+    if(!res.ok) return;
+    jobs = await res.json();
+    renderAll();
+  } catch(e) {}
+}
+
+function renderAll() {
+  renderStats();
+  renderKanban();
+  renderList();
+  renderRecent();
+  document.getElementById('kanban-badge').textContent = jobs.length;
+}
+
+function renderStats() {
+  const counts = {applied:0,shortlisted:0,interview:0,offer:0,rejected:0};
+  jobs.forEach(j => { if(counts[j.status]!==undefined) counts[j.status]++; });
+  document.getElementById('stat-total').textContent = jobs.length;
+  document.getElementById('stat-applied').textContent = counts.applied;
+  document.getElementById('stat-interview').textContent = counts.interview;
+  document.getElementById('stat-offer').textContent = counts.offer;
+  document.getElementById('stat-rejected').textContent = counts.rejected;
+  renderPipelineChart(counts);
+}
+
+function renderPipelineChart(counts) {
+  const statuses = ['applied','shortlisted','interview','offer','rejected'];
+  const colors = {'applied':'#6366f1','shortlisted':'#f59e0b','interview':'#00d4aa','offer':'#10b981','rejected':'#ef4444'};
+  const max = Math.max(...Object.values(counts), 1);
+  const chart = document.getElementById('pipeline-chart');
+  const labels = document.getElementById('pipeline-labels');
+  chart.innerHTML = ''; labels.innerHTML = '';
+  statuses.forEach(s => {
+    const h = Math.max((counts[s]/max)*100, 4);
+    chart.innerHTML += `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px"><div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:${colors[s]}">${counts[s]}</div><div style="width:100%;height:${h}px;background:${colors[s]};border-radius:6px 6px 0 0;opacity:.8"></div></div>`;
+    labels.innerHTML += `<div style="flex:1;text-align:center;font-size:11px;color:var(--text3);text-transform:capitalize">${s}</div>`;
+  });
+}
+
+function renderKanban() {
+  const statuses = ['applied','shortlisted','interview','offer','rejected'];
+  const colors = {'applied':'#6366f1','shortlisted':'#f59e0b','interview':'#00d4aa','offer':'#10b981','rejected':'#ef4444'};
+  const board = document.getElementById('kanban-board');
+  board.innerHTML = '';
+  statuses.forEach(s => {
+    const cols = jobs.filter(j => j.status === s);
+    const cards = cols.map(j => `
+      <div class="job-card">
+        <div class="job-company">${j.company}</div>
+        <div class="job-role">${j.role}</div>
+        <div class="job-date">${new Date(j.applied_date).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</div>
+        <div class="job-card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editJob(${j.id})">Edit</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteJob(${j.id})">Delete</button>
+        </div>
+      </div>`).join('');
+    board.innerHTML += `
+      <div class="kanban-col">
+        <div class="kanban-head">
+          <div class="col-label"><div class="dot" style="background:${colors[s]}"></div>${s.charAt(0).toUpperCase()+s.slice(1)}</div>
+          <div class="kanban-count">${cols.length}</div>
+        </div>
+        <div class="kanban-body">${cards||'<div style="color:var(--text3);font-size:12px;text-align:center;padding:1rem">Empty</div>'}</div>
+      </div>`;
+  });
+}
+
+function renderList(filter='') {
+  const tbody = document.getElementById('jobs-table-body');
+  const filtered = filter ? jobs.filter(j => j.status === filter) : jobs;
+  document.getElementById('list-empty').style.display = filtered.length ? 'none' : 'block';
+  tbody.innerHTML = filtered.map(j => `
+    <tr>
+      <td style="font-weight:500">${j.company}</td>
+      <td style="color:var(--text2)">${j.role}</td>
+      <td><span class="status-badge status-${j.status}">${statusDot(j.status)}${j.status}</span></td>
+      <td style="color:var(--text2)">${new Date(j.applied_date).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
+      <td style="color:var(--text2)">${j.contact_name||'—'}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="editJob(${j.id})" style="margin-right:4px">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteJob(${j.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function statusDot(s) {
+  const c = {'applied':'#818cf8','shortlisted':'#fbbf24','interview':'#00d4aa','offer':'#34d399','rejected':'#f87171'};
+  return `<div style="width:6px;height:6px;border-radius:50%;background:${c[s]||'#888'};display:inline-block;margin-right:5px;vertical-align:2px"></div>`;
+}
+
+function renderRecent() {
+  const el = document.getElementById('recent-jobs');
+  const recent = [...jobs].slice(0,5);
+  if(!recent.length) { el.innerHTML='<div style="color:var(--text2);font-size:13px">No applications yet. Add your first one!</div>'; return; }
+  el.innerHTML = recent.map(j => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-size:13px;font-weight:500">${j.company}</div><div style="font-size:12px;color:var(--text2)">${j.role}</div></div>
+      <span class="status-badge status-${j.status}">${j.status}</span>
+    </div>`).join('');
+}
+
+function filterByStatus(s) {
+  activeFilter = s;
+  document.getElementById('status-filter').value = s;
+  document.getElementById('list-subtitle').textContent = `Showing: ${s}`;
+  renderList(s);
+  showPage('list');
+}
+
+function filterStatus(s) {
+  activeFilter = s;
+  document.getElementById('list-subtitle').textContent = s ? `Showing: ${s}` : 'Showing all jobs';
+  renderList(s);
+}
+
+// ── MODAL ──
+function openModal(id=null) {
+  editingJobId = id;
+  document.getElementById('modal-title-text').textContent = id ? 'Edit Application' : 'Add New Application';
+  if(!id) {
+    ['job-company','job-role','job-url-input','job-jd','job-notes','job-contact-name','job-contact-email','job-deadline'].forEach(f => document.getElementById(f).value='');
+    document.getElementById('job-status').value = 'applied';
+  } else {
+    const j = jobs.find(x => x.id===id);
+    if(j) {
+      document.getElementById('job-company').value = j.company||'';
+      document.getElementById('job-role').value = j.role||'';
+      document.getElementById('job-url-input').value = j.job_url||'';
+      document.getElementById('job-jd').value = j.job_description||'';
+      document.getElementById('job-notes').value = j.notes||'';
+      document.getElementById('job-contact-name').value = j.contact_name||'';
+      document.getElementById('job-contact-email').value = j.contact_email||'';
+      document.getElementById('job-status').value = j.status;
+    }
+  }
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function editJob(id) { openModal(id); }
+
+async function saveJob() {
+  const company = document.getElementById('job-company').value.trim();
+  const role = document.getElementById('job-role').value.trim();
+  if(!company||!role) return showToast('Company and Role are required', 'error');
+  const payload = {
+    company, role,
+    status: document.getElementById('job-status').value,
+    job_url: document.getElementById('job-url-input').value||null,
+    job_description: document.getElementById('job-jd').value||null,
+    notes: document.getElementById('job-notes').value||null,
+    contact_name: document.getElementById('job-contact-name').value||null,
+    contact_email: document.getElementById('job-contact-email').value||null,
+  };
+  try {
+    const url = editingJobId ? `${API}/jobs/${editingJobId}` : `${API}/jobs/`;
+    const method = editingJobId ? 'PUT' : 'POST';
+    const res = await fetch(url, {method, headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`}, body:JSON.stringify(payload)});
+    if(!res.ok) return showToast('Failed to save', 'error');
+    closeModal();
+    await loadJobs();
+    showToast(editingJobId ? 'Application updated!' : 'Application added!', 'success');
+  } catch(e) { showToast('Server error', 'error'); }
+}
+
+async function deleteJob(id) {
+  if(!confirm('Delete this application?')) return;
+  try {
+    await fetch(`${API}/jobs/${id}`, {method:'DELETE', headers:{Authorization:`Bearer ${token}`}});
+    await loadJobs();
+    showToast('Application deleted', 'success');
+  } catch(e) { showToast('Delete failed', 'error'); }
+}
+
+async function scrapeUrl() {
+  const url = document.getElementById('job-url-input').value;
+  if(!url) return showToast('Enter a URL first', 'error');
+  showToast('Fetching job details...', 'success');
+  try {
+    const res = await fetch(`${API}/jobs/scrape`, {method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body:JSON.stringify({url})});
+    const data = await res.json();
+    if(data.company) document.getElementById('job-company').value = data.company;
+    if(data.role) document.getElementById('job-role').value = data.role;
+    if(data.job_description) document.getElementById('job-jd').value = data.job_description;
+    showToast('Details fetched!', 'success');
+  } catch(e) { showToast('Could not scrape URL', 'error'); }
+}
+
+// ── AI ──
+async function analyzeResume() {
+  const jd = document.getElementById('ai-jd').value.trim();
+  const resume = document.getElementById('ai-resume').value.trim();
+  if(!jd||!resume) return showToast('Please fill in both fields', 'error');
+  document.getElementById('ai-placeholder').style.display = 'none';
+  document.getElementById('ai-loading').style.display = 'block';
+  document.getElementById('ai-results').style.display = 'none';
+  try {
+    const res = await fetch(`${API}/ai/analyze`, {method:'POST', headers:{'Content-Type':'application/json', Authorization:`Bearer ${token}`}, body:JSON.stringify({resume_text:resume, job_description:jd})});
+    const data = await res.json();
+    document.getElementById('ai-loading').style.display = 'none';
+    document.getElementById('ai-results').style.display = 'block';
+    const scoreColor = data.match_score >= 70 ? 'var(--success)' : data.match_score >= 40 ? 'var(--warning)' : 'var(--danger)';
+    document.getElementById('ai-results').innerHTML = `
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div class="score-ring" style="border-color:${scoreColor};color:${scoreColor}">${data.match_score}%</div>
+        <div style="font-size:13px;color:var(--text2)">${data.summary||''}</div>
+      </div>
+      <div class="ai-section">
+        <div class="ai-section-title">Missing Keywords</div>
+        ${(data.missing_keywords||[]).map(k=>`<span class="ai-pill pill-red">${k}</span>`).join('')}
+      </div>
+      <div class="ai-section">
+        <div class="ai-section-title">Your Strong Points</div>
+        ${(data.strong_points||[]).map(k=>`<span class="ai-pill pill-green">${k}</span>`).join('')}
+      </div>
+      <div class="ai-section">
+        <div class="ai-section-title">Suggestions</div>
+        ${(data.suggestions||[]).map(s=>`<div class="ai-suggestion">${s}</div>`).join('')}
+      </div>`;
+  } catch(e) {
+    document.getElementById('ai-loading').style.display = 'none';
+    document.getElementById('ai-results').style.display = 'block';
+    document.getElementById('ai-results').innerHTML = '<div style="color:var(--danger);font-size:13px">AI analysis failed. Check your Gemini API key in backend .env file.</div>';
+  }
+}
+
+// ── NAVIGATION ──
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+  document.getElementById(`page-${page}`).classList.add('active');
+  document.getElementById(`nav-${page}`).classList.add('active');
+}
+
+// ── TOAST ──
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = `toast show ${type}`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──
+if(token) { loadApp(); } else {
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+</script>
+</body>

@@ -1,0 +1,52 @@
+<div class="page-header">
+  <div>
+    <div class="page-title">All Applications</div>
+    <div class="page-sub">{{ subtitle() }}</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <select class="form-select" style="width:auto;padding:7px 14px;font-size:13px"
+      [ngModel]="statusFilter()" (ngModelChange)="statusFilter.set($event)">
+      <option value="">All Status</option>
+      <option value="applied">Applied</option>
+      <option value="shortlisted">Shortlisted</option>
+      <option value="interview">Interview</option>
+      <option value="offer">Offer</option>
+      <option value="rejected">Rejected</option>
+    </select>
+    <button class="btn btn-primary" (click)="modal.open()">+ Add Job</button>
+  </div>
+</div>
+
+<div class="table-wrap">
+  @if (!filteredJobs().length) {
+    <div class="empty">
+      <div class="empty-icon">📋</div>
+      <h3>No applications yet</h3>
+      <p>Start tracking your job search by adding your first application</p>
+    </div>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Company</th><th>Role</th><th>Status</th>
+          <th>Applied</th><th>Contact</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (j of filteredJobs(); track j.id) {
+          <tr>
+            <td style="font-weight:500">{{ j.company }}</td>
+            <td style="color:var(--text2)">{{ j.role }}</td>
+            <td><span class="status-badge status-{{ j.status }}">{{ j.status }}</span></td>
+            <td style="color:var(--text2)">{{ formatDate(j.applied_date) }}</td>
+            <td style="color:var(--text2)">{{ j.contact_name || '—' }}</td>
+            <td>
+              <button class="btn btn-ghost btn-sm" (click)="modal.open(j.id)" style="margin-right:4px">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteJob(j.id)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

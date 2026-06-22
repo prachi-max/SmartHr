@@ -1,0 +1,64 @@
+@if (modal.isOpen()) {
+  <div class="modal-overlay" (click)="modal.close()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-head">
+        <span class="modal-title">{{ title }}</span>
+        <button class="btn btn-ghost btn-sm" (click)="modal.close()">✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Auto-fill from URL</label>
+          <div class="scrape-row">
+            <input class="form-input" type="url" placeholder="https://linkedin.com/jobs/..." [(ngModel)]="jobUrl">
+            <button class="url-btn" (click)="scrapeUrl()">Fetch →</button>
+          </div>
+        </div>
+        <div style="height:.5px;background:var(--border);margin:-4px 0 4px"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Company *</label>
+            <input class="form-input" placeholder="e.g. Google" [(ngModel)]="company">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Role *</label>
+            <input class="form-input" placeholder="e.g. Software Engineer" [(ngModel)]="role">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-select" [(ngModel)]="status">
+              <option value="applied">Applied</option>
+              <option value="shortlisted">Shortlisted</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Contact Name</label>
+            <input class="form-input" placeholder="HR name" [(ngModel)]="contactName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input class="form-input" type="email" placeholder="hr@company.com" [(ngModel)]="contactEmail">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Job Description</label>
+          <textarea class="form-textarea" placeholder="Paste the JD here..." [(ngModel)]="jobJd"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" placeholder="What did you discuss? Any follow-ups needed?" [(ngModel)]="notes"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" (click)="modal.close()">Cancel</button>
+        <button class="btn btn-primary" (click)="save()">Save Application</button>
+      </div>
+    </div>
+  </div>
+}

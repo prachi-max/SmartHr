@@ -1,0 +1,91 @@
+<div class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">Smart<span>Hire</span></div>
+    <p class="auth-sub">Track your job search. Land your dream role.</p>
+
+    <div class="auth-tabs">
+      <div class="auth-tab" [class.active]="activeTab()==='login'" (click)="switchTab('login')">Sign In</div>
+      <div class="auth-tab" [class.active]="activeTab()==='register'" (click)="switchTab('register')">Create Account</div>
+    </div>
+
+    @if (errorMsg()) {
+      <div class="auth-error" [class.success]="errorIsSuccess()">{{ errorMsg() }}</div>
+    }
+
+    <!-- @if (activeTab() === 'login') {
+      <div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com" [(ngModel)]="loginEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="••••••••" [(ngModel)]="loginPass" (keyup.enter)="doLogin()">
+        </div>
+        <button class="auth-btn" (click)="doLogin()">Sign In</button>
+      </div>
+    } -->
+    
+@if (activeTab() === 'login') {
+  <div>
+    <!-- Email Field -->
+    <div class="form-group">
+      <label class="form-label" for="recruiterEmailInput">EMAIL</label>
+      <input 
+        id="recruiterEmailInput"
+        name="loginEmail"
+        class="form-input" 
+        type="email" 
+        placeholder="you@example.com" 
+        [(ngModel)]="loginEmail">
+    </div>
+
+    <!-- Password Field -->
+    <div class="form-group" style="margin-top: 16px;">
+      <label class="form-label" for="recruiterPassInput">PASSWORD</label>
+      <input 
+        id="recruiterPassInput"
+        name="loginPass"
+        class="form-input" 
+        type="password" 
+        placeholder="••••••••" 
+        [(ngModel)]="loginPass" 
+        (keyup.enter)="doLogin()">
+    </div>
+
+    <!-- Sign In Button -->
+    <button class="auth-btn" style="margin-top: 24px;" (click)="doLogin()">Sign In</button>
+
+    <!-- 🟢 Demo Accounts Box (Perfect for your Dark Theme) -->
+    <div class="demo-creds-container" (click)="loginEmail='jonejadav02@gmail.com'; loginPass='jadav@02'">
+      <div class="demo-title">⚡ Recruiter Demo Account</div>
+      <div class="demo-row">
+        <span>Email:</span> <strong>jonejadav02@gmail.com</strong>
+      </div>
+      <div class="demo-row">
+        <span>Password:</span> <strong>jadav@02</strong>
+      </div>
+      <div class="demo-hint">(Click anywhere on this box to auto-fill)</div>
+    </div>
+  </div>
+}
+
+    @if (activeTab() === 'register') {
+      <div>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" placeholder="Your Name" [(ngModel)]="regName">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" placeholder="you@example.com" [(ngModel)]="regEmail">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Min 8 characters" [(ngModel)]="regPass">
+        </div>
+        <button class="auth-btn" (click)="doRegister()">Create Account</button>
+      </div>
+    }
+  </div>
+</div>

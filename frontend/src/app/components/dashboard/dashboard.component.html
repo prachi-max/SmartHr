@@ -1,0 +1,64 @@
+<div class="page-header">
+  <div>
+    <div class="page-title">Dashboard</div>
+    <div class="page-sub">Your job search at a glance</div>
+  </div>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card total" (click)="filterByStatus('')">
+    <div class="stat-label">Total Applied</div>
+    <div class="stat-value">{{ stats().total }}</div>
+  </div>
+  <div class="stat-card applied-s" (click)="filterByStatus('applied')">
+    <div class="stat-label">Applied</div>
+    <div class="stat-value">{{ stats().applied }}</div>
+  </div>
+  <div class="stat-card interview-s" (click)="filterByStatus('interview')">
+    <div class="stat-label">Interviews</div>
+    <div class="stat-value">{{ stats().interview }}</div>
+  </div>
+  <div class="stat-card offer-s" (click)="filterByStatus('offer')">
+    <div class="stat-label">Offers</div>
+    <div class="stat-value">{{ stats().offer }}</div>
+  </div>
+  <div class="stat-card rejected-s" (click)="filterByStatus('rejected')">
+    <div class="stat-label">Rejected</div>
+    <div class="stat-value">{{ stats().rejected }}</div>
+  </div>
+</div>
+
+<!-- Pipeline Chart -->
+<div class="chart-card">
+  <div class="section-label">Application Pipeline</div>
+  <div class="pipeline-chart">
+    @for (s of statuses; track s) {
+      <div class="bar-col">
+        <div class="bar-count" [style.color]="colors[s]">{{ getStatValue(s) }}</div>
+        <div class="bar" [style.height.px]="barHeight(getStatValue(s))" [style.background]="colors[s]"></div>
+      </div>
+    }
+  </div>
+  <div class="pipeline-labels">
+    @for (s of statuses; track s) {
+      <div class="bar-label">{{ s }}</div>
+    }
+  </div>
+</div>
+
+<!-- Recent Applications -->
+<div class="chart-card">
+  <div class="section-label">Recent Applications</div>
+  @if (!recentJobs().length) {
+    <div class="empty-text">No applications yet. Add your first one!</div>
+  }
+  @for (j of recentJobs(); track j.id) {
+    <div class="recent-row">
+      <div>
+        <div class="recent-company">{{ j.company }}</div>
+        <div class="recent-role">{{ j.role }}</div>
+      </div>
+      <span class="status-badge status-{{ j.status }}">{{ j.status }}</span>
+    </div>
+  }
+</div>
